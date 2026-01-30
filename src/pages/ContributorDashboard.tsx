@@ -116,7 +116,7 @@ export default function ContributorDashboard() {
   const fetchUserProfile = async () => {
     try {
       const { accessToken } = getGitHubData();
-      
+
       if (!accessToken) {
         toast.error("GitHub authentication required");
         return;
@@ -124,9 +124,14 @@ export default function ContributorDashboard() {
 
       const response = await axios.post(
         `${API_BASE}/api/contributor/profile`,
-        { accessToken }
+        { accessToken },
+        {
+          headers: {
+            Authorization: `Bearer ${user?.accessToken}`
+          }
+        }
       );
-      
+
       if (response.data.success) {
         const profile = response.data.data.profile;
         const stats = response.data.data.stats;
@@ -143,7 +148,12 @@ export default function ContributorDashboard() {
 
   const fetchUserStakes = async () => {
     try {
-      const response = await axios.get(`${API_BASE}/api/contributor/stakes`);
+      if (!user?.accessToken) return;
+      const response = await axios.get(`${API_BASE}/api/contributor/stakes`, {
+        headers: {
+          Authorization: `Bearer ${user.accessToken}`
+        }
+      });
       if (response.data.success) {
         setUserStakes(response.data.data);
       }
@@ -154,17 +164,22 @@ export default function ContributorDashboard() {
 
   const analyzeRepositories = async () => {
     const { accessToken } = getGitHubData();
-    
+
     if (!accessToken) {
       toast.error("GitHub authentication required");
       return;
     }
-    
+
     setAnalyzingRepos(true);
     try {
       const response = await axios.post(
         `${API_BASE}/api/contributor/analyze-repositories`,
-        { accessToken }
+        { accessToken },
+        {
+          headers: {
+            Authorization: `Bearer ${user?.accessToken}`
+          }
+        }
       );
 
       if (response.data.success) {
@@ -180,17 +195,22 @@ export default function ContributorDashboard() {
 
   const fetchSuggestedIssues = async () => {
     const { accessToken } = getGitHubData();
-    
+
     if (!accessToken) {
       toast.error("GitHub authentication required");
       return;
     }
-    
+
     setLoading(true);
     try {
       const response = await axios.post(
         `${API_BASE}/api/contributor/suggested-issues`,
-        { accessToken }
+        { accessToken },
+        {
+          headers: {
+            Authorization: `Bearer ${user?.accessToken}`
+          }
+        }
       );
 
       if (response.data.success) {
@@ -273,16 +293,16 @@ export default function ContributorDashboard() {
               <Badge variant="secondary">Contributor</Badge>
             </div>
             <div className="flex items-center space-x-4">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="sm"
                 onClick={() => navigate("/contributor/profile")}
               >
                 <User className="w-4 h-4 mr-1" />
                 Profile
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="sm"
                 onClick={() => navigate("/contributor/settings")}
               >
@@ -306,11 +326,10 @@ export default function ContributorDashboard() {
               <button
                 key={id}
                 onClick={() => setActiveTab(id as any)}
-                className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
-                  activeTab === id
+                className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${activeTab === id
                     ? "border-gray-900 text-gray-900"
                     : "border-transparent text-gray-500 hover:text-gray-700"
-                }`}
+                  }`}
               >
                 <Icon className="w-4 h-4" />
                 <span>{label}</span>
