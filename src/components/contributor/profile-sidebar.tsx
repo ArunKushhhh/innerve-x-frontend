@@ -62,36 +62,42 @@ export function ProfileSidebar({ userData, topLanguages }: ProfileSidebarProps) 
         <div className="mb-8">
           <h3 className="text-sm font-medium text-neutral-900 mb-4">Connect</h3>
           <div className="space-y-3">
-            <a
-              href={userData.socialLinks.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center text-neutral-600 hover:text-neutral-900 transition-colors group"
-            >
-              <Github className="w-4 h-4 mr-3" />
-              <span className="text-sm">GitHub</span>
-              <ExternalLink className="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
-            </a>
-            <a
-              href={userData.socialLinks.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center text-neutral-600 hover:text-neutral-900 transition-colors group"
-            >
-              <Linkedin className="w-4 h-4 mr-3" />
-              <span className="text-sm">LinkedIn</span>
-              <ExternalLink className="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
-            </a>
-            <a
-              href={userData.socialLinks.twitter}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center text-neutral-600 hover:text-neutral-900 transition-colors group"
-            >
-              <Twitter className="w-4 h-4 mr-3" />
-              <span className="text-sm">Twitter</span>
-              <ExternalLink className="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
-            </a>
+            {userData.socialLinks.github && (
+              <a
+                href={userData.socialLinks.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center text-neutral-600 hover:text-neutral-900 transition-colors group"
+              >
+                <Github className="w-4 h-4 mr-3" />
+                <span className="text-sm">GitHub</span>
+                <ExternalLink className="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+              </a>
+            )}
+            {userData.socialLinks.linkedin && (
+              <a
+                href={userData.socialLinks.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center text-neutral-600 hover:text-neutral-900 transition-colors group"
+              >
+                <Linkedin className="w-4 h-4 mr-3" />
+                <span className="text-sm">LinkedIn</span>
+                <ExternalLink className="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+              </a>
+            )}
+            {userData.socialLinks.twitter && (
+              <a
+                href={userData.socialLinks.twitter}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center text-neutral-600 hover:text-neutral-900 transition-colors group"
+              >
+                <Twitter className="w-4 h-4 mr-3" />
+                <span className="text-sm">Twitter</span>
+                <ExternalLink className="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+              </a>
+            )}
           </div>
         </div>
 

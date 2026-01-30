@@ -1,31 +1,35 @@
 import { Navigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
-
-interface JwtPayload {
-  role: string;
-  exp?: number;
-}
+import { useUser } from "@/context/UserProvider";
 
 interface PrivateRouteProps {
   allowedRoles: string[];
   children: React.ReactNode;
 }
 
+/**
+ * PrivateRoute protects routes that require authentication.
+ * It also ensures users can only access routes matching their role.
+ */
 const PrivateRoute = ({ allowedRoles, children }: PrivateRouteProps) => {
-  const token = localStorage.getItem("token");
+  const { user, isLoading } = useUser();
 
-  if (!token) return <Navigate to="/" />;
-
-  try {
-    const decoded = jwtDecode<JwtPayload>(token);
-    if (allowedRoles.includes(decoded.role)) {
-      return <>{children}</>;
-    } else {
-      return <Navigate to="/" />;
-    }
-  } catch {
-    return <Navigate to="/" />;
+  // Show nothing while loading to prevent flash of wrong content
+  if (isLoading) {
+    return null;
   }
+
+  // If user is not logged in, redirect to login
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // If user's role is not in the allowed roles, redirect to their own dashboard
+  if (!allowedRoles.includes(user.role)) {
+    return <Navigate to={`/${user.role}/dashboard`} replace />;
+  }
+
+  // User is authenticated and has the correct role
+  return <>{children}</>;
 };
 
 export default PrivateRoute;

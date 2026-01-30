@@ -24,6 +24,7 @@ import {
   XCircle,
   ExternalLink,
   User,
+  LogOut,
 } from "lucide-react";
 import axios from "axios";
 import { toast } from "sonner";
@@ -88,7 +89,7 @@ interface Stake {
 }
 
 export default function ContributorDashboard() {
-  const { user, isLoading: userLoading } = useUser();
+  const { user, isLoading: userLoading, logout } = useUser();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"overview" | "issues" | "stakes">("overview");
   const [userStats, setUserStats] = useState<UserStats | null>(null);
@@ -107,29 +108,25 @@ export default function ContributorDashboard() {
     }
   }, [user]);
 
-  const getGitHubData = () => {
-    const accessToken = localStorage.getItem('github_access_token');
-    const githubUsername = localStorage.getItem('github_username');
-    return { accessToken, githubUsername };
-  };
+  // const getGitHubData = () => {
+  //   const accessToken = localStorage.getItem('github_access_token');
+  //   const githubUsername = localStorage.getItem('github_username');
+  //   return { accessToken, githubUsername };
+  // };
 
   const fetchUserProfile = async () => {
     try {
-      const { accessToken } = getGitHubData();
+      const accessToken = user?.accessToken;
 
       if (!accessToken) {
-        toast.error("GitHub authentication required");
+        toast.error("Authentication required");
         return;
       }
 
       const response = await axios.post(
         `${API_BASE}/api/contributor/profile`,
-        { accessToken },
-        {
-          headers: {
-            Authorization: `Bearer ${user?.accessToken}`
-          }
-        }
+        {},
+        { headers: { Authorization: `Bearer ${accessToken}` } }
       );
 
       if (response.data.success) {
@@ -141,18 +138,18 @@ export default function ContributorDashboard() {
     } catch (error: any) {
       console.error("Error fetching user profile:", error);
       if (error.response?.status === 401) {
-        toast.error("Invalid GitHub token. Please re-authenticate.");
+        toast.error("Session expired. Please re-authenticate.");
       }
     }
   };
 
   const fetchUserStakes = async () => {
     try {
-      if (!user?.accessToken) return;
+      const accessToken = user?.accessToken;
+      if (!accessToken) return;
+
       const response = await axios.get(`${API_BASE}/api/contributor/stakes`, {
-        headers: {
-          Authorization: `Bearer ${user.accessToken}`
-        }
+        headers: { Authorization: `Bearer ${accessToken}` }
       });
       if (response.data.success) {
         setUserStakes(response.data.data);
@@ -163,10 +160,10 @@ export default function ContributorDashboard() {
   };
 
   const analyzeRepositories = async () => {
-    const { accessToken } = getGitHubData();
+    const accessToken = user?.accessToken;
 
     if (!accessToken) {
-      toast.error("GitHub authentication required");
+      toast.error("Authentication required");
       return;
     }
 
@@ -174,12 +171,8 @@ export default function ContributorDashboard() {
     try {
       const response = await axios.post(
         `${API_BASE}/api/contributor/analyze-repositories`,
-        { accessToken },
-        {
-          headers: {
-            Authorization: `Bearer ${user?.accessToken}`
-          }
-        }
+        {},
+        { headers: { Authorization: `Bearer ${accessToken}` } }
       );
 
       if (response.data.success) {
@@ -194,10 +187,10 @@ export default function ContributorDashboard() {
   };
 
   const fetchSuggestedIssues = async () => {
-    const { accessToken } = getGitHubData();
+    const accessToken = user?.accessToken;
 
     if (!accessToken) {
-      toast.error("GitHub authentication required");
+      toast.error("Authentication required");
       return;
     }
 
@@ -205,12 +198,8 @@ export default function ContributorDashboard() {
     try {
       const response = await axios.post(
         `${API_BASE}/api/contributor/suggested-issues`,
-        { accessToken },
-        {
-          headers: {
-            Authorization: `Bearer ${user?.accessToken}`
-          }
-        }
+        {},
+        { headers: { Authorization: `Bearer ${accessToken}` } }
       );
 
       if (response.data.success) {
@@ -309,6 +298,14 @@ export default function ContributorDashboard() {
                 <Settings className="w-4 h-4 mr-1" />
                 Settings
               </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={logout}
+              >
+                <LogOut className="w-4 h-4 mr-1" />
+                Logout
+              </Button>
             </div>
           </div>
         </div>
@@ -327,8 +324,8 @@ export default function ContributorDashboard() {
                 key={id}
                 onClick={() => setActiveTab(id as any)}
                 className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${activeTab === id
-                    ? "border-gray-900 text-gray-900"
-                    : "border-transparent text-gray-500 hover:text-gray-700"
+                  ? "border-gray-900 text-gray-900"
+                  : "border-transparent text-gray-500 hover:text-gray-700"
                   }`}
               >
                 <Icon className="w-4 h-4" />

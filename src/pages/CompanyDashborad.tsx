@@ -8,6 +8,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useUser } from "@/context/UserProvider";
+import { LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -23,6 +26,7 @@ import { ContributorsTable } from "../components/ContributorsTable";
 import { UserProfileModal } from "../components/UserProfileModal";
 
 export default function CompanyDashboard() {
+  const { logout } = useUser();
   useEffect(() => {
     async function fetchContributors() {
       try {
@@ -78,6 +82,14 @@ export default function CompanyDashboard() {
             Discover and connect with top open source contributors
           </p>
         </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={logout}
+        >
+          <LogOut className="w-4 h-4 mr-1" />
+          Logout
+        </Button>
       </div>
 
       {/* Stats Cards */}
