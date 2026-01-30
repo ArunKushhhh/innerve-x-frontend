@@ -73,6 +73,18 @@ export default function LoginPage() {
     if (email) Cookie.set("pq_email", email, { expires: 30 });
   }, [email]);
 
+  // Auto-redirect to GitHub OAuth after successful email/password login
+  useEffect(() => {
+    if (currentCase === "github_oauth" && isVerified && role) {
+      console.log("🚀 Auto-redirecting to GitHub OAuth for role:", role);
+      // Small delay to allow state updates and show the transition screen
+      const timer = setTimeout(() => {
+        handleGitHubOAuth();
+      }, 1500); // 1.5 second delay so user sees the "Identity Verified" message
+      return () => clearTimeout(timer);
+    }
+  }, [currentCase, isVerified, role]);
+
   useEffect(() => {
     if (user) console.log("🔐 Context user:", user);
   }, [user]);
@@ -114,6 +126,7 @@ export default function LoginPage() {
   const handleInitialLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!role) return;
+    console.log("🔐 Starting login for:", { role, email, githubUsername });
     const result = await login({
       role,
       email,
@@ -123,13 +136,22 @@ export default function LoginPage() {
           ? githubUsername
           : undefined,
     });
+    console.log("🔐 Login result:", result);
     if (result.success) {
       if (role === "contributor" || role === "maintainer") {
+        console.log(
+          "✅ Login success for",
+          role,
+          "- transitioning to GitHub OAuth",
+        );
         setIsVerified(true);
         setCurrentCase("github_oauth");
       } else {
+        console.log("✅ Company login - going to dashboard");
         navigate(`/${role}/dashboard`);
       }
+    } else {
+      console.log("❌ Login failed");
     }
   };
 

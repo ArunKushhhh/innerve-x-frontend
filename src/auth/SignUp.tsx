@@ -1,52 +1,77 @@
-"use client"
+"use client";
 
 import logo from "@/assets/Logo.png";
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { ArrowRight } from "lucide-react"
-import { useRegister } from "../hooks/UseRegister"
-import { toast } from "sonner"
-import { useNavigate } from "react-router-dom"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ArrowRight } from "lucide-react";
+import { useRegister } from "../hooks/UseRegister";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 export default function SignUp() {
-  const [role, setRole] = useState("")
-  const [githubUsername, setGithubUsername] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const { register, isLoading, error } = useRegister()
-  const navigate = useNavigate()
+  const [role, setRole] = useState("");
+  const [githubUsername, setGithubUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { register, isLoading, error } = useRegister();
+  const navigate = useNavigate();
 
   const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     const result = await register({
       role,
       email,
       password,
-      githubUsername: (role === "contributor" || role === "maintainer") ? githubUsername : undefined,
-    })
+      githubUsername:
+        role === "contributor" || role === "maintainer"
+          ? githubUsername
+          : undefined,
+    });
 
     if (result?.success) {
-        toast("✅ User registered successfully!")
+      toast("✅ User registered successfully!");
 
-
-      setTimeout(() => {
-        navigate("/login")
-      }, 1000)
+      // For contributors/maintainers, redirect directly to GitHub OAuth
+      if (role === "contributor" || role === "maintainer") {
+        console.log("🚀 Redirecting to GitHub OAuth after signup for:", role);
+        // Store pre-OAuth info for callback
+        localStorage.setItem(
+          "preOAuthUser",
+          JSON.stringify({ role, email, githubUsername }),
+        );
+        // Redirect directly to GitHub OAuth
+        setTimeout(() => {
+          window.location.href = `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/auth/github?role=${role}`;
+        }, 1000);
+      } else {
+        // Companies go to login
+        setTimeout(() => {
+          navigate("/login");
+        }, 1000);
+      }
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <span className="text-xl font-semibold text-gray-900">Pull Quest</span>
+            <span className="text-xl font-semibold text-gray-900">
+              Pull Quest
+            </span>
           </div>
         </div>
       </nav>
@@ -55,10 +80,18 @@ export default function SignUp() {
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
             <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gray-900">
-  <img src={logo} alt="Pull Quest Logo" className="h-16 w-16 object-cover rounded-full" />
-</div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Join Pull Quest Now </h1>
-            <p className="text-xl text-gray-600">Let’s get you started based on your role</p>
+              <img
+                src={logo}
+                alt="Pull Quest Logo"
+                className="h-16 w-16 object-cover rounded-full"
+              />
+            </div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              Join Pull Quest Now{" "}
+            </h1>
+            <p className="text-xl text-gray-600">
+              Let’s get you started based on your role
+            </p>
           </div>
 
           <Card className="border border-gray-200 shadow-lg">
@@ -140,7 +173,8 @@ export default function SignUp() {
                     !email ||
                     !password ||
                     !role ||
-                    ((role === "contributor" || role === "maintainer") && !githubUsername)
+                    ((role === "contributor" || role === "maintainer") &&
+                      !githubUsername)
                   }
                 >
                   {isLoading ? (
@@ -159,7 +193,10 @@ export default function SignUp() {
 
               <div className="mt-8 text-center text-sm text-gray-600">
                 Already have an account?{" "}
-                <a href="/login" className="font-medium text-gray-900 hover:underline">
+                <a
+                  href="/login"
+                  className="font-medium text-gray-900 hover:underline"
+                >
                   Log in
                 </a>
               </div>
@@ -168,5 +205,5 @@ export default function SignUp() {
         </div>
       </div>
     </div>
-  )
+  );
 }
