@@ -55,7 +55,6 @@ interface UserProfile {
   following: number;
 }
 
-
 interface Stake {
   _id: string;
   issueId: number;
@@ -177,19 +176,14 @@ export default function ContributorDashboard() {
 
       if (response.data.success) {
         toast.success("Repository analysis completed!");
-        const {
-          repositories,
-          contributableRepos,
-          totalRepos,
-          languages,
-        } = response.data.data;
+        const { repositories, contributableRepos, totalRepos, languages } =
+          response.data.data;
         setAnalyzedRepos(repositories);
         setRepoStats({
           total: totalRepos,
           contributable: contributableRepos,
           languages: languages,
         });
-
 
         // Analysis results are now shown inline on the current tab
       }
@@ -248,7 +242,6 @@ export default function ContributorDashboard() {
         return "bg-gray-100 text-gray-800";
     }
   };
-
 
   const getStakeStatusIcon = (status: string) => {
     switch (status) {
@@ -351,10 +344,11 @@ export default function ContributorDashboard() {
               <button
                 key={id}
                 onClick={() => setActiveTab(id as any)}
-                className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${activeTab === id
-                  ? "border-gray-900 text-gray-900"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
-                  }`}
+                className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
+                  activeTab === id
+                    ? "border-gray-900 text-gray-900"
+                    : "border-transparent text-gray-500 hover:text-gray-700"
+                }`}
               >
                 <Icon className="w-4 h-4" />
                 <span>{label}</span>

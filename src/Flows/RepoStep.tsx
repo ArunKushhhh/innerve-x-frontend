@@ -37,9 +37,10 @@ export default function RepoStep() {
       return;
     }
     setLoading(true);
-    const url = `${import.meta.env.VITE_API_URL || "http://localhost:8012"}` +
-                `/api/maintainer/repos-by-username?githubUsername=${encodeURIComponent(githubUsername)}` +
-                `&per_page=100&page=1`;
+    const url =
+      `${import.meta.env.VITE_API_URL || "http://localhost:8012"}` +
+      `/api/maintainer/repos-by-username?githubUsername=${encodeURIComponent(githubUsername)}` +
+      `&per_page=100&page=1`;
     const token = localStorage.getItem("token");
 
     axios
@@ -48,12 +49,13 @@ export default function RepoStep() {
         headers: { Authorization: token ? `Bearer ${token}` : undefined },
       })
       .then((res) => {
-        if (res.data.success) setRepos(
-          res.data.data.map((r) => ({
-            ...r,
-            visibility: r.visibility ?? "Public",
-          }))
-        );
+        if (res.data.success)
+          setRepos(
+            res.data.data.map((r) => ({
+              ...r,
+              visibility: r.visibility ?? "Public",
+            })),
+          );
         else setError("Failed to load repositories");
       })
       .catch((err) => {

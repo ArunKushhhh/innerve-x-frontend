@@ -160,7 +160,7 @@ export default function LoginPage() {
       "preOAuthUser",
       JSON.stringify({ role, email, githubUsername }),
     );
-    window.location.href = `${import.meta.env.VITE_API_URL || "http://localhost:8012"}/auth/github?role=${role}`;
+    window.location.href = `${import.meta.env.VITE_API_URL || "https://innerve-x-backend.vercel.app"}/auth/github?role=${role}`;
   };
 
   const renderInitialLogin = () => (
