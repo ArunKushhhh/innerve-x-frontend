@@ -1,5 +1,4 @@
 import type React from "react";
-import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -109,7 +108,6 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  const navigate = useNavigate();
   if (!user) return null;
 
   const formatDate = (dateString: string): string => {
@@ -121,7 +119,10 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto" aria-describedby="profile-modal-desc">
+      <DialogContent
+        className="max-w-2xl max-h-[80vh] overflow-y-auto"
+        aria-describedby="profile-modal-desc"
+      >
         <DialogHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -248,7 +249,10 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                   style={{ boxShadow: "none" }}
                   onClick={() => {
                     if (user?.githubUsername) {
-                      window.open(`https://github.com/${user.githubUsername}?tab=repositories`, '_blank');
+                      window.open(
+                        `https://github.com/${user.githubUsername}?tab=repositories`,
+                        "_blank",
+                      );
                     }
                   }}
                 >
@@ -289,7 +293,10 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
               className="flex-1"
               onClick={() => {
                 if (user?.githubUsername) {
-                  window.open(`https://github.com/${user.githubUsername}`, '_blank');
+                  window.open(
+                    `https://github.com/${user.githubUsername}`,
+                    "_blank",
+                  );
                 }
               }}
             >
